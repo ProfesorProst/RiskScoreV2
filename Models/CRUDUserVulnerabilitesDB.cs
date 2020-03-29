@@ -49,6 +49,11 @@ namespace DependencyCheck.Models
             return context.userVulnerabilityDBs.Find(id);
         }
 
+        public UserVulnerabilityDB ReadByUserVuln(long personId, long vulnId)
+        {
+            return context.userVulnerabilityDBs.Where(x => x.userid == personId && x.vulnerabilityid == vulnId).ToList().FirstOrDefault();
+        }
+
         public List<UserVulnerabilityDB> GetObjects()
         {
             return context.userVulnerabilityDBs.ToList();

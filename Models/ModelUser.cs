@@ -42,8 +42,7 @@ namespace RiskScore.Models
 
         private UserDB GetObject(long personId)
         {
-            UserDB person = crudUser.Read(personId);
-            return person;
+            return crudUser.Read(personId);
         }
 
         private List<VulnerabilityDB> GetAllEmptyVulnerabilities()
@@ -61,10 +60,47 @@ namespace RiskScore.Models
             var emptyVuln = GetAllEmptyVulnerabilities();
             var userVulnerabilityDBs = crudUserVulnerabilitesDB.GetObjects().Select(x => x.vulnerability).ToList();
 
-            var proccedVuln = emptyVuln.Except(userVulnerabilityDBs).ToList().First();
-            UserVulnerabilityDB newUserVulnerabilityDB = new UserVulnerabilityDB(Convert.ToInt32(userId), proccedVuln.id);
-            crudUserVulnerabilitesDB.Create(newUserVulnerabilityDB);
+            UserVulnerabilityDB newUserVulnerabilityDB = null;
+            foreach(var proccedVuln in emptyVuln.Except(userVulnerabilityDBs).ToList())
+            {
+                newUserVulnerabilityDB = crudUserVulnerabilitesDB.ReadByUserVuln(userId, proccedVuln.id);
+                if (newUserVulnerabilityDB == null)
+                {
+                    newUserVulnerabilityDB = new UserVulnerabilityDB(Convert.ToInt32(userId), proccedVuln.id);
+                    crudUserVulnerabilitesDB.Create(newUserVulnerabilityDB);
+                    break;
+                }
+                else
+                    if(newUserVulnerabilityDB.techDamage == null || newUserVulnerabilityDB.bizDamage == null 
+                        || newUserVulnerabilityDB.threats == null)
+                    break;
+            }
+            
             return newUserVulnerabilityDB;
+        }
+
+        internal bool UserCreateMark(int mark, string v, long vulnId, long userId)
+        {
+            var newUserVulnDB = new UserVulnerabilityDB(userId, vulnId);
+            switch (v)
+            {
+                case "threats":
+                    if (newUserVulnDB.threats != null) return false;
+                    newUserVulnDB.threats = mark;
+                    break;
+                case "techDamage":
+                    if (newUserVulnDB.techDamage != null) return false;
+                    newUserVulnDB.techDamage = mark;
+                    break;
+                case "bizDamage":
+                    if (newUserVulnDB.bizDamage != null) return false;
+                    newUserVulnDB.bizDamage = mark;
+                    break;
+                default:
+                    return false;
+            }
+            crudUserVulnerabilitesDB.Update(newUserVulnDB);
+            return true;
         }
     }
 }

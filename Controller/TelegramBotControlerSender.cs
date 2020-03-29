@@ -50,9 +50,9 @@ namespace RiskScore.Controller
                 {
                     var splitedText = data.Split(",");
                     int mark = Convert.ToInt32(splitedText[0]);
-                    int vulnId = Convert.ToInt32(splitedText[2]);
+                    long vulnId = Convert.ToInt32(splitedText[2]);
 
-                    modelUser.UserCreateMark(mark, splitedText[1], vulnId);
+                    modelUser.UserCreateMark(mark, splitedText[1], vulnId, userId);
                     SendOneMessage(userId, view.nothingToDo, null);
                 }
 
