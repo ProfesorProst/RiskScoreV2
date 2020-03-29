@@ -12,7 +12,8 @@ namespace DependencyCheck.Data
         public DbSet<DependencyVulnerabilityDB> dependencyVulnerabilityDBs { get; set; }
         public DbSet<DependencyDB> dependencyDBs { get; set; }
         public DbSet<VulnerabilityDB> vulnerabilityDBs { get; set; }
-        public DbSet<UserDB> users { get; set; }
+        public DbSet<UserDB> userDBs { get; set; }
+        public DbSet<UserVulnerabilityDB> userVulnerabilityDBs { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

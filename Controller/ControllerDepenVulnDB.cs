@@ -8,11 +8,11 @@ using System.Text;
 
 namespace DependencyCheck.Controller
 {
-    class ContrDepenVulnDB
+    class ControllerDepenVulnDB
     {
         Context db;
 
-        public ContrDepenVulnDB()
+        public ControllerDepenVulnDB()
         {
             db = new Context();
         }
@@ -56,6 +56,11 @@ namespace DependencyCheck.Controller
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        public List<VulnerabilityDB> GetAllVulnerabilities()
+        {
+            return db.vulnerabilityDBs.ToList();
         }
 
         private ICollection<VulnerabilityDB> CheckIfInDB(List<VulnerabilityDB> vulnerabilityDBs)

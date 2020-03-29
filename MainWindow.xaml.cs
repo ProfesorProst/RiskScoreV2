@@ -20,7 +20,7 @@ namespace DependencyCheck
         TextBoxOutputter outputter;
         ProcessDepend processDepend;
         List<DependencyVulnerabilityDB> dependencyVulnerabilityDBs;
-        ContrDepenVulnDB cdv;
+        ControllerDepenVulnDB cdv;
         BackgroundWorker bgWorker = new BackgroundWorker();
         TelegramBotControler telegramBotControler = new TelegramBotControler();
         public MainWindow()
@@ -122,7 +122,7 @@ namespace DependencyCheck
             IdentifyVulnerabilities identifyVulnerabilities = new IdentifyVulnerabilities();
             dependencyVulnerabilityDBs = identifyVulnerabilities.OWASPDependencyCheck(projectName, pathToProject, outFromat);
 
-            cdv = new ContrDepenVulnDB();
+            cdv = new ControllerDepenVulnDB();
             cdv.SaveList(dependencyVulnerabilityDBs);
             //Console.Read();
 

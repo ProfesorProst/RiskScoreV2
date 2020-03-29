@@ -19,7 +19,7 @@ namespace RiskScore.Models
         public void Create(UserDB user)
         {
             context = new Context();
-            context.users.Add(user);
+            context.userDBs.Add(user);
             context.SaveChanges();
         }
 
@@ -29,12 +29,12 @@ namespace RiskScore.Models
 
         public UserDB Read(long id)
         {
-            return context.users.Find(id);
+            return context.userDBs.Find(id);
         }
 
         public List<UserDB> GetObjects() 
         {
-            return context.users.ToList();
+            return context.userDBs.ToList();
         }
     }
 }

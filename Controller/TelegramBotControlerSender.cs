@@ -3,7 +3,9 @@ using RiskScore.Models;
 using RiskScore.View;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Telegram.Bot.Types;
 
 namespace RiskScore.Controller
@@ -38,59 +40,43 @@ namespace RiskScore.Controller
         internal string CallbackQuery(long userId, string data, Message message)
         {
             String s1;
-            /*
-            if (modelPerson.TryIfExist(userId))
-            {
-                if (data == "Elf" || data == "Orc" || data == "Person" || data == "Gnome")
+            if (modelUser.TryIfExist(userId))
+                if (data == "Ready")
                 {
-                    s1 = "Gods do not want you to change the race!";
-                    SendOneMessage(userId, s1, view.keyboardHome);
+                    FindNewWork(userId);
                 }
                 else
-                if (data == "attack" || data == "def")
+                if (new Regex(@"^(([1-9]|10),(threats|techDamage|bizDamage),\d*)$").IsMatch(data))
                 {
-                    int attackOrDef = 0;
-                    if (data == "def") attackOrDef = 1;
-                    if (modelPerson.LvlUp(userId, attackOrDef)) s1 = view.upStatesOK;
-                    else s1 = view.upStatesFalse;
-                    SendOneMessage(userId, s1, view.keyboardHome);
-                }
-                else
-                if ((data == "Alliance" || data == "Republic") && modelPerson.GetPerson(userId).fraction == null)
-                {
-                    int allianceOrRepublic = 0;
-                    if (data == "Republic") allianceOrRepublic = 1;
-                    if (modelPerson.SetFraction(userId, allianceOrRepublic)) s1 = view.setFractionSuccses;
-                    else s1 = view.setFractionFail;
-                    SendOneMessage(userId, s1, view.keyboardHome);
-                }
-                else
-                if (new Regex(@"^Accept ").IsMatch(data))
-                {
-                    Guild guild = modelGuild.GuildJoinOut(userId, Convert.ToInt64(data.Split(' ')[1]));
-                    if (guild != null)
-                    {
-                        SendOneMessage(userId, viewGuild.GetGuild(guild), viewGuild.keyboardGuild);
-                        Person person = modelPerson.GetObjectByPersonNick(guild.master);
-                        SendOneMessage(person.id, viewGuild.inviteAccepted, viewGuild.keyboardGuild);
-                    }
-                }
-            }
+                    var splitedText = data.Split(",");
+                    int mark = Convert.ToInt32(splitedText[0]);
+                    int vulnId = Convert.ToInt32(splitedText[2]);
 
-            else
-            if (data == "Elf" || data == "Orc" || data == "Person" || data == "Gnome")
+                    modelUser.UserCreateMark(mark, splitedText[1], vulnId);
+                    SendOneMessage(userId, view.nothingToDo, null);
+                }
+
+            return "";
+        }
+
+        private bool FindNewWork(long userId)
+        {
+            if (modelUser.FindEmptyVuln())
             {
-                if (message.Chat.Username == "" || message.Chat.Username == null) SendOneMessage(userId, view.createNewUserEmptyUsername, view.keyboardHome);
+                SendOneMessage(userId, view.nothingToDo, null);
+            }
+            else
+            {
+                var vuln = modelUser.FindTask(userId);
+                if (vuln == null)
+                    SendOneMessage(userId, view.nothingToDo, null);
                 else
                 {
-                    Person person = modelPerson.CreateNewUser(userId, message.Chat.Username, data);
-                    s1 = "You hav choosen " + data;
-                    String s2 = view.States(person, modelPerson.atackAdditional(person.id), modelPerson.defAdditional(person.id));
-                    SendTwoMessages(userId, s1, s2, view.keyboardHome);
+                    SendOneInlineMessage(userId, view.textAboutVuln(vuln), view.setMark(vuln));
+                    return false;
                 }
             }
-            */
-            return "";
+            return true;
         }
 
         internal void SendStartMessagesToAll()

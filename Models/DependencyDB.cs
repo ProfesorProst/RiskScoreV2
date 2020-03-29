@@ -10,7 +10,7 @@ namespace DependencyCheck.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int id { get; set; }
+        public long id { get; set; }
         [MaxLength(128)]
         [Index("NameANDFileName", 1, IsUnique = true)]
         public string name { get; set; }
