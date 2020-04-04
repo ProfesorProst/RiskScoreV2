@@ -11,7 +11,7 @@
         <Button x:Name="Start" HorizontalAlignment="Left" Margin="26,345,0,0" VerticalAlignment="Top" Height="44" Width="96" Click="Start_Click" Content="Старт Бот" IsEnabled="False"/>
         <Button x:Name="Cansel" Content="Зупинити" HorizontalAlignment="Left" Margin="224,345,0,0" VerticalAlignment="Top" Height="44" Width="100" IsEnabled="False" Click="Cansel_Click"/>
         <ProgressBar x:Name="progressBarStatus" HorizontalAlignment="Left" Height="27" Margin="50,283,0,0" VerticalAlignment="Top" Width="224" IsEnabled="False"/>
-        <Slider x:Name="SliderOfUsers" HorizontalAlignment="Left" Margin="74,235,0,0" VerticalAlignment="Top" Width="181" IsEnabled="False"/>
+        <Slider x:Name="SliderOfUsers" Thumb.DragCompleted="MySlider_DragCompleted" HorizontalAlignment="Left" Margin="74,235,0,0" VerticalAlignment="Top" Width="181" IsEnabled="False"/>
         <Label Content="Label" HorizontalAlignment="Left" Margin="50,185,0,0" VerticalAlignment="Top"/>
         <Button Content="Старт Аналізу" HorizontalAlignment="Left" Margin="117,101,0,0" VerticalAlignment="Top" Height="56" Width="85" Click="Button_Click"/>
     </Grid>

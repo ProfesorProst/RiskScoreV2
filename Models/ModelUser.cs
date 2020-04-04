@@ -15,6 +15,8 @@ namespace RiskScore.Models
         public ModelUser()
         {
             crudUser = new CRUDUser();
+            controllerDepenVuln = new ControllerDepenVulnDB();
+            crudUserVulnerabilitesDB = new CRUDUserVulnerabilitesDB();
         }
 
         public UserDB CreateNewUser(long id, string userName)
@@ -47,8 +49,10 @@ namespace RiskScore.Models
 
         private List<VulnerabilityDB> GetAllEmptyVulnerabilities()
         {
-            return controllerDepenVuln.GetAllVulnerabilities().FindAll(n => n.techDamage == null
-                || n.threats == null || n.bizDamage == null).ToList(); ;
+            var empVul = from n in controllerDepenVuln.GetAllVulnerabilities()
+                         where n.techDamage == null || n.threats == null || n.bizDamage == null
+                         select n;
+            return (empVul != null)? empVul.ToList(): null ;
         }
         public bool FindEmptyVuln()
         {
@@ -68,6 +72,7 @@ namespace RiskScore.Models
                 {
                     newUserVulnerabilityDB = new UserVulnerabilityDB(Convert.ToInt32(userId), proccedVuln.id);
                     crudUserVulnerabilitesDB.Create(newUserVulnerabilityDB);
+                    newUserVulnerabilityDB = crudUserVulnerabilitesDB.Read(newUserVulnerabilityDB.id);
                     break;
                 }
                 else

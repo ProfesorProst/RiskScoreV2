@@ -25,13 +25,14 @@ namespace RiskScore.Controller
         internal string TextMessage(long userId, Message message)
         {
             string rezult = "";
-            if (message.Text == "/start")
-                if (message.Chat.Username == "" || message.Chat.Username == null) SendOneMessage(userId, view.createNewUserEmptyUsername, null);
+            if (!modelUser.TryIfExist(userId))
+                if (message.Text == "/start")
+                if (message.From.Username == "" || message.From.Username == null) SendOneMessage(userId, view.createNewUserEmptyUsername, null);
                 else
                 {
                     UserDB person = modelUser.CreateNewUser(userId, message.Chat.Username);
-                    SendOneMessage(userId, view.createNewUserEmptyUsername, null);
-                    rezult = view.createNewUserSucces(person);
+                    SendOneMessage(userId, view.createNewUserSucces, null);
+                    rezult = view.createdNewUser(person);
                 }
                 else SendOneMessage(userId, "What? I dont understand. Write /start", null);
             return rezult;
@@ -54,20 +55,26 @@ namespace RiskScore.Controller
 
                     modelUser.UserCreateMark(mark, splitedText[1], vulnId, userId);
                     SendOneMessage(userId, view.nothingToDo, null);
+                    return "+1";
                 }
 
             return "";
         }
 
+        internal int UserCount()
+        {
+            return modelUser.GetObjects().Count;
+        }
+
         private bool FindNewWork(long userId)
         {
-            if (modelUser.FindEmptyVuln())
+            if (!modelUser.FindEmptyVuln())
             {
                 SendOneMessage(userId, view.nothingToDo, null);
             }
             else
             {
-                var vuln = modelUser.FindTask(userId);
+                UserVulnerabilityDB vuln = modelUser.FindTask(userId);
                 if (vuln == null)
                     SendOneMessage(userId, view.nothingToDo, null);
                 else

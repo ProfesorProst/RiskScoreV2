@@ -20,7 +20,11 @@ namespace RiskScore.Models
         {
             context = new Context();
             context.userDBs.Add(user);
-            context.SaveChanges();
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception e) { }
         }
 
         public void Update(UserDB obj) { }

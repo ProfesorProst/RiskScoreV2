@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using DependencyCheck.Controller;
 using System.Linq;
 using System.ComponentModel;
+using System.Windows.Controls.Primitives;
 
 namespace DependencyCheck
 {
@@ -39,13 +40,23 @@ namespace DependencyCheck
             bgWorker.RunWorkerCompleted += bw_RunWorkerCompleted;
 
             // ProgressBar is added to the form manually, and here I am just setting some initial values
-            progressBarStatus.Maximum = 1;
+            SliderOfUsers.Minimum = 0;
+            SliderOfUsers.Maximum = telegramBotControler.UserCount();
+            progressBarStatus.Maximum = (telegramBotControler.UserCount() > 1) ? telegramBotControler.UserCount() : 1;
             progressBarStatus.Minimum = 0;
             progressBarStatus.Value = 0;
         }
 
+        void MySlider_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+
+        }
+
         void bw_DoWork(object sender, DoWorkEventArgs e)
         {
+            telegramBotControler.bw_DoWork(sender, e);
+            while (true)
+            {
             if (bgWorker.CancellationPending)   
             {                                   
                 bgWorker.CancelAsync();
@@ -53,21 +64,20 @@ namespace DependencyCheck
             }
             Thread.Sleep(1);
 
-            string s = telegramBotControler.bw_DoWork(sender, e).ToString();
 
-            bgWorker.ReportProgress(0,s); 
+            }
         }
 
         void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if ( progressBarStatus.Maximum == e.ProgressPercentage)
+            if ( e.UserState == "+1")
             {
-                progressBarStatus.Value = 0; 
+                progressBarStatus.Value++;
 
             }
             else
             {
-                progressBarStatus.Value++;
+                
             }
         }
         void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -146,6 +156,8 @@ namespace DependencyCheck
 
         private void Start_Click(object sender, RoutedEventArgs e)
         {
+
+
             telegramBotControler.SendStartMessagesToAll();
             bgWorker.RunWorkerAsync();
         }

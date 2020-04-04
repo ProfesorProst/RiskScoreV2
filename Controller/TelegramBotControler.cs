@@ -16,11 +16,11 @@ namespace RiskScore.Controller
             controlerSender = new TelegramBotControlerSender(bot);
         }
 
-        public async Task<string> bw_DoWork(object sender, DoWorkEventArgs e)
+        public async void bw_DoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
-                await bot.SetWebhookAsync("");
+                 bot.SetWebhookAsync("");
 
                 bot.OnUpdate += async (object su, Telegram.Bot.Args.UpdateEventArgs evu) =>
                 {
@@ -50,8 +50,12 @@ namespace RiskScore.Controller
 
             }
 
-            return "";
             //e.Result = result;///!!!
+        }
+
+        internal int UserCount()
+        {
+            return controlerSender.UserCount();
         }
 
         internal void SendStartMessagesToAll()

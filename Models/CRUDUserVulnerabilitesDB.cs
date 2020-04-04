@@ -51,12 +51,15 @@ namespace DependencyCheck.Models
 
         public UserVulnerabilityDB ReadByUserVuln(long personId, long vulnId)
         {
-            return context.userVulnerabilityDBs.Where(x => x.userid == personId && x.vulnerabilityid == vulnId).ToList().FirstOrDefault();
+            var uv = context.userVulnerabilityDBs.Where(x => x.userid == personId && x.vulnerability_id == vulnId).ToList().FirstOrDefault();
+            uv.vulnerability = context.vulnerabilityDBs.Where(x => x.id == uv.vulnerability_id).ToList().FirstOrDefault();
+            return uv;
         }
 
         public List<UserVulnerabilityDB> GetObjects()
         {
-            return context.userVulnerabilityDBs.ToList();
+            var temp = context.userVulnerabilityDBs;
+            return temp.ToList();
         }
     }
 }
