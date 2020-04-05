@@ -10,6 +10,8 @@ using DependencyCheck.Controller;
 using System.Linq;
 using System.ComponentModel;
 using System.Windows.Controls.Primitives;
+using DependencyCheck.Entity;
+using System.Text.RegularExpressions;
 
 namespace DependencyCheck
 {
@@ -34,15 +36,14 @@ namespace DependencyCheck
             processDepend = new ProcessDepend(riskRules);
 
             bgWorker.DoWork += bw_DoWork;
-            bgWorker.WorkerReportsProgress = true;        // needed to be able to report progress
-            bgWorker.WorkerSupportsCancellation = true;   // needed to be able to stop the thread using CancelAsync();
+            bgWorker.WorkerReportsProgress = true;        
+            bgWorker.WorkerSupportsCancellation = true;   
             bgWorker.ProgressChanged += bw_ProgressChanged;
             bgWorker.RunWorkerCompleted += bw_RunWorkerCompleted;
 
-            // ProgressBar is added to the form manually, and here I am just setting some initial values
             SliderOfUsers.Minimum = 0;
-            SliderOfUsers.Maximum = telegramBotControler.UserCount();
-            progressBarStatus.Maximum = (telegramBotControler.UserCount() > 1) ? telegramBotControler.UserCount() : 1;
+            SliderOfUsers.Maximum = 1;
+            progressBarStatus.Maximum = (telegramBotControler.UserCount() > 1) ? telegramBotControler.UserCount() * 3 :3;
             progressBarStatus.Minimum = 0;
             progressBarStatus.Value = 0;
         }
@@ -54,7 +55,9 @@ namespace DependencyCheck
 
         void bw_DoWork(object sender, DoWorkEventArgs e)
         {
-            telegramBotControler.bw_DoWork(sender, e);
+            Ref<string> rezult = new Ref<string>();
+            Ref<string> rezultOld = new Ref<string>();
+            telegramBotControler.bw_DoWork(rezult);
             while (true)
             {
             if (bgWorker.CancellationPending)   
@@ -64,20 +67,22 @@ namespace DependencyCheck
             }
             Thread.Sleep(1);
 
-
+                if(rezultOld.Value != rezult.Value)
+                {
+                    rezultOld.Value = rezult.Value;
+                    bgWorker.ReportProgress(0,rezult.Value);
+                }
             }
         }
 
         void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if ( e.UserState == "+1")
+            if (new Regex(@"^[+]\d,").IsMatch(e.UserState.ToString()))
             {
                 progressBarStatus.Value++;
 
-            }
-            else
-            {
-                
+                if (progressBarStatus.Value == progressBarStatus.Maximum)
+                    bgWorker.CancelAsync();
             }
         }
         void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -150,8 +155,16 @@ namespace DependencyCheck
                     break;
                 }
 
+
+            int usrCount = telegramBotControler.UserCount();
+            int emptyVulner = telegramBotControler.GetAllEmptyVulnerabilitiesCount();
+            int countOfWork = usrCount * emptyVulner * 3;
+            SliderOfUsers.Maximum = countOfWork;
+            progressBarStatus.Maximum = (countOfWork > 1) ? countOfWork : 1;
+
             Start.IsEnabled = true;
             Cansel.IsEnabled = true;
+
         }
 
         private void Start_Click(object sender, RoutedEventArgs e)

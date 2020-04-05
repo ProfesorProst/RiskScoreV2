@@ -1,4 +1,5 @@
-﻿using DependencyCheck.Models;
+﻿using DependencyCheck.Entity;
+using DependencyCheck.Models;
 using RiskScore.Models;
 using RiskScore.View;
 using System;
@@ -22,9 +23,8 @@ namespace RiskScore.Controller
             this.bot = bot;
         }
 
-        internal string TextMessage(long userId, Message message)
+        internal void TextMessage(long userId, Message message,ref Ref<string> rezult)
         {
-            string rezult = "";
             if (!modelUser.TryIfExist(userId))
                 if (message.Text == "/start")
                 if (message.From.Username == "" || message.From.Username == null) SendOneMessage(userId, view.createNewUserEmptyUsername, null);
@@ -32,13 +32,13 @@ namespace RiskScore.Controller
                 {
                     UserDB person = modelUser.CreateNewUser(userId, message.Chat.Username);
                     SendOneMessage(userId, view.createNewUserSucces, null);
-                    rezult = view.createdNewUser(person);
+                    rezult.Value = view.createdNewUser(person);
                 }
                 else SendOneMessage(userId, "What? I dont understand. Write /start", null);
-            return rezult;
+            return ;
         }
 
-        internal string CallbackQuery(long userId, string data, Message message)
+        internal void CallbackQuery(long userId, string data, Message message, ref Ref<string> rezult)
         {
             String s1;
             if (modelUser.TryIfExist(userId))
@@ -52,13 +52,13 @@ namespace RiskScore.Controller
                     var splitedText = data.Split(",");
                     int mark = Convert.ToInt32(splitedText[0]);
                     long vulnId = Convert.ToInt32(splitedText[2]);
+                    string categotry = splitedText[1];
 
-                    modelUser.UserCreateMark(mark, splitedText[1], vulnId, userId);
-                    SendOneMessage(userId, view.nothingToDo, null);
-                    return "+1";
+                    var uservul = modelUser.UserCreateMark(mark, categotry, vulnId, userId);
+                    FindNewWork(userId);
+                    rezult.Value = "+1," + " User: " + userId + ". vuler: " + uservul.vulnerability.name +
+                        ". Added: " + categotry;
                 }
-
-            return "";
         }
 
         internal int UserCount()
@@ -84,6 +84,11 @@ namespace RiskScore.Controller
                 }
             }
             return true;
+        }
+
+        public int GetAllEmptyVulnerabilitiesCount()
+        {
+            return modelUser.GetAllEmptyVulnerabilities().Count();
         }
 
         internal void SendStartMessagesToAll()

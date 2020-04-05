@@ -35,15 +35,18 @@ namespace RiskScore.View
 
         internal string textAboutVuln(UserVulnerabilityDB vulnerabilityDB)
         {
-            return "Vulnerability name: " + vulnerabilityDB.vulnerability.name+"\n" +
-                    "Description: " + vulnerabilityDB.vulnerability.description;
+            var markFor = (vulnerabilityDB.threats == null) ? "threats" : (vulnerabilityDB.techDamage == null) ? "tech damage" :
+               (vulnerabilityDB.bizDamage == null) ? "biznes damage" : "";
+            return "Vulnerability name: " + vulnerabilityDB.vulnerability.name + "\n" +
+                    "Description: " + vulnerabilityDB.vulnerability.description + "\n" +
+                    "Make an assessment of " + markFor;
         }
 
         internal InlineKeyboardMarkup setMark(UserVulnerabilityDB vulnerabilityDB)
         {
             var numberToInput = (vulnerabilityDB.threats == null) ? "threats" : (vulnerabilityDB.techDamage == null) ? "techDamage" :
                 (vulnerabilityDB.bizDamage == null) ? "bizDamage" : "";
-            numberToInput += "," + vulnerabilityDB.vulnerability.name;
+            numberToInput += "," + vulnerabilityDB.vulnerability.id;
             return new InlineKeyboardMarkup(new[]
                 {
                     new []

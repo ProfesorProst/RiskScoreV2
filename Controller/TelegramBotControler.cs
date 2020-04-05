@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DependencyCheck.Entity;
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace RiskScore.Controller
             controlerSender = new TelegramBotControlerSender(bot);
         }
 
-        public async void bw_DoWork(object sender, DoWorkEventArgs e)
+        public async void bw_DoWork(Ref<string> rezult)
         {
             try
             {
@@ -30,7 +31,7 @@ namespace RiskScore.Controller
                     if (message == null) return;
                     long userId = message.Chat.Id;
                     if (message.Type == Telegram.Bot.Types.Enums.MessageType.Text)
-                        controlerSender.TextMessage(userId, message);
+                        controlerSender.TextMessage(userId, message, ref rezult);
                 };
 
                 // Callback'и от кнопок
@@ -40,7 +41,7 @@ namespace RiskScore.Controller
                     long userId = ev.CallbackQuery.Message.Chat.Id;
                     var data = ev.CallbackQuery.Data;
 
-                    controlerSender.CallbackQuery(userId, data, message);
+                    controlerSender.CallbackQuery(userId, data, message, ref rezult);
                 };
 
                 bot.StartReceiving();
@@ -51,6 +52,11 @@ namespace RiskScore.Controller
             }
 
             //e.Result = result;///!!!
+        }
+
+        public int GetAllEmptyVulnerabilitiesCount()
+        {
+            return controlerSender.GetAllEmptyVulnerabilitiesCount();
         }
 
         internal int UserCount()
