@@ -1,10 +1,11 @@
 ﻿using DependencyCheck.Data;
+using DependencyCheck.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DependencyCheck.Models
+namespace RiskScore.Models
 {
     class CRUDUserVulnerabilitesDB
     {

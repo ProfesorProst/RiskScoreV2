@@ -6,13 +6,13 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 
-namespace DependencyCheck.Controller
+namespace RiskScore.Models
 {
-    class ControllerDepenVulnDB
+    class CRUDDepenVulnDB
     {
         Context db;
 
-        public ControllerDepenVulnDB()
+        public CRUDDepenVulnDB()
         {
             db = new Context();
         }

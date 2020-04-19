@@ -1,17 +1,16 @@
-﻿
-using System;
+﻿using System;
 using System.Windows;
 using System.Threading;
 using DependencyCheck.Models;
 using RiskScore.Entity;
 using RiskScore.Controller;
 using System.Collections.Generic;
-using DependencyCheck.Controller;
 using System.Linq;
 using System.ComponentModel;
 using System.Windows.Controls.Primitives;
 using DependencyCheck.Entity;
 using System.Text.RegularExpressions;
+using RiskScore.Models;
 
 namespace DependencyCheck
 {
@@ -23,9 +22,14 @@ namespace DependencyCheck
         TextBoxOutputter outputter;
         ProcessDepend processDepend;
         List<DependencyVulnerabilityDB> dependencyVulnerabilityDBs;
-        ControllerDepenVulnDB cdv;
+        CRUDDepenVulnDB cdv;
         BackgroundWorker bgWorker = new BackgroundWorker();
         TelegramBotControler telegramBotControler = new TelegramBotControler();
+
+
+        string projectName = "index";
+        string pathToProject = "C:\\Users\\profe\\Desktop\\index";
+        string outFromat = "JSON";
         public MainWindow()
         {
             InitializeComponent(); 
@@ -88,21 +92,43 @@ namespace DependencyCheck
         void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             MessageBox.Show("Worker completed");
+            ModelVulnerabilityDB modelVulnerabilityDB = new ModelVulnerabilityDB();
+            var emptyVuln = modelVulnerabilityDB.GetAllEmptyVulnerabilities();
+            var userVulnerabilityDBs = new CRUDUserVulnerabilitesDB().GetObjects().ToList();
+            AntColonyPheromone antColony = new AntColonyPheromone();
+            foreach (var item in emptyVuln)
+            {
+                var userVulns = userVulnerabilityDBs.Where(x => x.id == item.id).ToList();
+                int[][] jArray = new int[userVulns.Count][];
+                int index = 0;   
+                
+                foreach (var userVuln in userVulns)
+                {
+                    jArray[index] = new int[] { (int)userVuln.threats.GetValueOrDefault(),
+                        (int)userVuln.techDamage.GetValueOrDefault(), (int)userVuln.bizDamage.GetValueOrDefault() };
+                    index++;
+                }
+                var rezult = antColony.Calculation(jArray);
 
+                item.threats = rezult[0];
+                item.techDamage = rezult[1];
+                item.bizDamage = rezult[2];
+
+                modelVulnerabilityDB.UpdateVulnerabilityDB(item);
+            }
+            
             DateTime dateTime = new DateTime();
             List<RiskScoreEntities> riskScoreEntities = new List<RiskScoreEntities>();
+
+            dependencyVulnerabilityDBs = cdv.GetList();
+
+            dependencyVulnerabilityDBs = dependencyVulnerabilityDBs.Where(x => x.fileScaning == pathToProject + projectName)
+                .OrderBy(x => x.dateTime).ToList();
 
             foreach (DependencyVulnerabilityDB dependencyVulnerabilityDB in dependencyVulnerabilityDBs.ToList())
             {
                 List<VulnerabilityDB> vulnerabilitiesNew = new List<VulnerabilityDB>();
                 double sum = 0;
-
-                /*
-                if (processDepend.CheckIfNeedParams(dependencyVulnerabilityDB.vulnerabilityDBs))
-                {
-                    
-                }
-                */
 
                 foreach (VulnerabilityDB vulnerability in dependencyVulnerabilityDB.vulnerabilityDBs)
                 {
@@ -131,13 +157,10 @@ namespace DependencyCheck
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            string projectName = "index";
-            string pathToProject = "C:\\Users\\profe\\Desktop\\index";
-            string outFromat = "JSON";
             IdentifyVulnerabilities identifyVulnerabilities = new IdentifyVulnerabilities();
             dependencyVulnerabilityDBs = identifyVulnerabilities.OWASPDependencyCheck(projectName, pathToProject, outFromat);
 
-            cdv = new ControllerDepenVulnDB();
+            cdv = new CRUDDepenVulnDB();
             cdv.SaveList(dependencyVulnerabilityDBs);
             //Console.Read();
 

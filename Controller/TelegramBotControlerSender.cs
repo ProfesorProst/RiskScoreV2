@@ -14,11 +14,13 @@ namespace RiskScore.Controller
     class TelegramBotControlerSender
     {
         ModelUser modelUser;
+        ModelVulnerabilityDB modelVulnerabilityDB;
         TelegramBotView view;
         public Telegram.Bot.TelegramBotClient bot;
         public TelegramBotControlerSender(Telegram.Bot.TelegramBotClient bot)
         {
             modelUser = new ModelUser();
+            modelVulnerabilityDB = new ModelVulnerabilityDB();
             view = new TelegramBotView();
             this.bot = bot;
         }
@@ -54,7 +56,7 @@ namespace RiskScore.Controller
                     long vulnId = Convert.ToInt32(splitedText[2]);
                     string categotry = splitedText[1];
 
-                    var uservul = modelUser.UserCreateMark(mark, categotry, vulnId, userId);
+                    var uservul = modelVulnerabilityDB.UserCreateMark(mark, categotry, vulnId, userId);
                     FindNewWork(userId);
                     rezult.Value = "+1," + " User: " + userId + ". vuler: " + uservul.vulnerability.name +
                         ". Added: " + categotry;
@@ -68,13 +70,13 @@ namespace RiskScore.Controller
 
         private bool FindNewWork(long userId)
         {
-            if (!modelUser.FindEmptyVuln())
+            if (!modelVulnerabilityDB.FindEmptyVuln())
             {
                 SendOneMessage(userId, view.nothingToDo, null);
             }
             else
             {
-                UserVulnerabilityDB vuln = modelUser.FindTask(userId);
+                UserVulnerabilityDB vuln = modelVulnerabilityDB.FindTask(userId);
                 if (vuln == null)
                     SendOneMessage(userId, view.nothingToDo, null);
                 else
@@ -88,7 +90,7 @@ namespace RiskScore.Controller
 
         public int GetAllEmptyVulnerabilitiesCount()
         {
-            return modelUser.GetAllEmptyVulnerabilities().Count();
+            return modelVulnerabilityDB.GetAllEmptyVulnerabilities().Count();
         }
 
         internal void SendStartMessagesToAll()

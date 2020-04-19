@@ -1,33 +1,34 @@
 ﻿using System.Linq;
 
-namespace AntColony
+namespace RiskScore.Models
 {
     internal class AntColonyPheromone
     {
         // pheromone increase factor
-        private static double Q0 = 2.0;
-        private static double Q1 = 1.0;
-        private static double Q2 = 0.5;
+        private static double Q0 = 20.0;
+        private static double Q1 = 11.0;
+        private static double Q2 = 6.0;
 
         //user make 3 choise for one item
-        private const int numCities = 3;
+        private int numCities;
         //user have 10 variant per choise
         private const int numVar = 10;
 
         public int[] Calculation(int[][] ants1)
         {
+            numCities = ants1.Length;
             int[][] ants = new int[numCities][];
 
-            ants[0] = new int[numCities] { 6, 5, 7 };
-            ants[1] = new int[numCities] { 6, 7, 5 };
-            ants[2] = new int[numCities] { 5, 7, 7 };
+            ants[0] = new int[] { 6, 5, 7 };
+            ants[1] = new int[] { 6, 7, 5 };
+            ants[2] = new int[] { 5, 7, 7 };
             double[][] pheromones = InitPheromones(numCities, numVar);
 
-            for (int i = 0; i < ants.Length; i++)
+            for (int i = 0; i < ants1.Length; i++)
             {
-                UpdatePheromones(pheromones, getColumn(ants, i));
+                UpdatePheromones(pheromones, getColumn(ants1, i));
             }
-            return AntColonyPheromone.BestTrail(pheromones);
+            return BestTrail(pheromones);
         }
 
         public static T[] getColumn<T>(T[][] array, int index)
@@ -59,7 +60,7 @@ namespace AntColony
             }
         }
 
-        private static int[] BestTrail(double[][] pher)
+        private int[] BestTrail(double[][] pher)
         {
             int[] bestTrail = new int[numCities];
 
