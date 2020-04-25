@@ -14,5 +14,7 @@
         <Slider x:Name="SliderOfUsers" Thumb.DragCompleted="MySlider_DragCompleted" HorizontalAlignment="Left" Margin="74,235,0,0" VerticalAlignment="Top" Width="181" IsEnabled="False"/>
         <Label Content="Label" HorizontalAlignment="Left" Margin="50,185,0,0" VerticalAlignment="Top"/>
         <Button Content="Старт Аналізу" HorizontalAlignment="Left" Margin="117,101,0,0" VerticalAlignment="Top" Height="56" Width="85" Click="Button_Click"/>
+        <TextBox x:Name="programPath" TextWrapping="NoWrap" AcceptsReturn="False" HorizontalAlignment="Left" Margin="10,38,0,0" Text="" VerticalAlignment="Top" Width="218" Height="23"/>
+        <Button Name="btnOpenFile" Click="btnOpenFile_Click" Content="Open file" HorizontalAlignment="Left" Margin="248,40,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

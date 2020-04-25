@@ -11,6 +11,8 @@ using System.Windows.Controls.Primitives;
 using DependencyCheck.Entity;
 using System.Text.RegularExpressions;
 using RiskScore.Models;
+using Microsoft.Win32;
+using System.IO;
 
 namespace DependencyCheck
 {
@@ -201,6 +203,19 @@ namespace DependencyCheck
         private void Cansel_Click(object sender, RoutedEventArgs e)
         {
             bgWorker.CancelAsync();
+        }
+
+        private void btnOpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = " files (*.html)|*.html|All files (*.*)|*.*";
+            openFileDialog.Multiselect = false;
+            if (openFileDialog.ShowDialog() == true)
+            {
+                programPath.Text = openFileDialog.FileName;
+                projectName = openFileDialog.SafeFileName;
+                pathToProject = programPath.Text.Replace(projectName, "");
+            }                
         }
     }
 }
