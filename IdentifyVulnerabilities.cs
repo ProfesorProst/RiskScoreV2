@@ -38,7 +38,7 @@ namespace DependencyCheck
                 .Select((x) => new DependencyVulnerabilityDB
                 {
                     dependency = (new DependencyDB { fileName = x.FileName, filePath = x.FilePath, name = x.Packages.First().Id }),
-                    vulnerabilityDBs = x.Vulnerabilities.Select(x => new VulnerabilityDB
+                    vulnerabilityDBs = x.Vulnerabilities.Where(x => x.Cvssv3 != null).Select(x => new VulnerabilityDB
                     { name = x.Name, vulnerability = x.Cvssv3.BaseScore, description = x.Description }).ToList(),
                     dateTime = test.ProjectInfo.ReportDate.UtcDateTime,
                     fileScaning = filescaning

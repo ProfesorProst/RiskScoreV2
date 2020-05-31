@@ -213,9 +213,10 @@ namespace DependencyCheck
             if (openFileDialog.ShowDialog() == true)
             {
                 programPath.Text = openFileDialog.FileName;
-                projectName = openFileDialog.SafeFileName;
-                pathToProject = programPath.Text.Replace(projectName, "");
-            }                
+                projectName = openFileDialog.SafeFileName.Split(".").First();
+                pathToProject = programPath.Text.Replace(openFileDialog.SafeFileName, "");
+                pathToProject = pathToProject.Remove(pathToProject.Length - 1);
+            }
         }
     }
 }

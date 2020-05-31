@@ -5,16 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DependencyCheck"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Risk Score" Height="450" Width="800">
     <Grid>
-        <TextBox Width="400" x:Name="TestBox" Margin="369,10,31,10" HorizontalScrollBarVisibility="Auto"/>
-        <Button x:Name="Start" HorizontalAlignment="Left" Margin="26,345,0,0" VerticalAlignment="Top" Height="44" Width="96" Click="Start_Click" Content="Старт Бот" IsEnabled="False"/>
-        <Button x:Name="Cansel" Content="Зупинити" HorizontalAlignment="Left" Margin="224,345,0,0" VerticalAlignment="Top" Height="44" Width="100" IsEnabled="False" Click="Cansel_Click"/>
-        <ProgressBar x:Name="progressBarStatus" HorizontalAlignment="Left" Height="27" Margin="50,283,0,0" VerticalAlignment="Top" Width="224" IsEnabled="False"/>
-        <Slider x:Name="SliderOfUsers" Thumb.DragCompleted="MySlider_DragCompleted" HorizontalAlignment="Left" Margin="74,235,0,0" VerticalAlignment="Top" Width="181" IsEnabled="False"/>
-        <Label Content="Label" HorizontalAlignment="Left" Margin="50,185,0,0" VerticalAlignment="Top"/>
-        <Button Content="Старт Аналізу" HorizontalAlignment="Left" Margin="117,101,0,0" VerticalAlignment="Top" Height="56" Width="85" Click="Button_Click"/>
-        <TextBox x:Name="programPath" TextWrapping="NoWrap" AcceptsReturn="False" HorizontalAlignment="Left" Margin="10,38,0,0" Text="" VerticalAlignment="Top" Width="218" Height="23"/>
-        <Button Name="btnOpenFile" Click="btnOpenFile_Click" Content="Open file" HorizontalAlignment="Left" Margin="248,40,0,0" VerticalAlignment="Top"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="15*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox Width="400" x:Name="TestBox" Margin="319,10,31,10" HorizontalScrollBarVisibility="Auto" Grid.Column="1"/>
+        <Button x:Name="Start" HorizontalAlignment="Left" Margin="26,345,0,0" VerticalAlignment="Top" Height="44" Width="96" Click="Start_Click" Content="Старт Бот" IsEnabled="False" Grid.ColumnSpan="2"/>
+        <Button x:Name="Cansel" Content="Зупинити" HorizontalAlignment="Left" Margin="174,345,0,0" VerticalAlignment="Top" Height="44" Width="100" IsEnabled="False" Click="Cansel_Click" Grid.Column="1"/>
+        <ProgressBar x:Name="progressBarStatus" HorizontalAlignment="Left" Height="27" Margin="10,287,0,0" VerticalAlignment="Top" Width="224" IsEnabled="False" Grid.Column="1"/>
+        <Slider x:Name="SliderOfUsers" Thumb.DragCompleted="MySlider_DragCompleted" HorizontalAlignment="Left" Margin="32,217,0,0" VerticalAlignment="Top" Width="180" IsEnabled="False" Grid.Column="1"/>
+        <Label Content="Кількість користувачів" HorizontalAlignment="Left" Margin="25,182,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <Button Content="Старт Аналізу" HorizontalAlignment="Left" Margin="96,96,0,0" VerticalAlignment="Top" Height="56" Width="86" Click="Button_Click" Grid.Column="1"/>
+        <TextBox x:Name="programPath" TextWrapping="NoWrap" AcceptsReturn="False" HorizontalAlignment="Left" Margin="19,35,0,0" Text="" VerticalAlignment="Top" Width="255" Height="26" Grid.ColumnSpan="2"/>
+        <Button Name="btnOpenFile" Click="btnOpenFile_Click" Content="Open file" HorizontalAlignment="Left" Margin="238,35,0,0" VerticalAlignment="Top" Grid.Column="1" Height="26" Width="66"/>
     </Grid>
 </Window>
