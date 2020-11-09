@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using RiskScore.Models;
 using Microsoft.Win32;
 using System.IO;
+using RiskScoreV2;
 
 namespace DependencyCheck
 {
@@ -34,12 +35,14 @@ namespace DependencyCheck
         string outFromat = "JSON";
         public MainWindow()
         {
-            InitializeComponent(); 
+            InitializeComponent();
+            TestBox.Visibility = Visibility.Hidden;
             outputter = new TextBoxOutputter(TestBox);
             Console.SetOut(outputter);
 
             RiskRules riskRules = new RiskRules();
             processDepend = new ProcessDepend(riskRules);
+            cdv = new CRUDDepenVulnDB();
 
             bgWorker.DoWork += bw_DoWork;
             bgWorker.WorkerReportsProgress = true;        
@@ -93,7 +96,7 @@ namespace DependencyCheck
         }
         void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            MessageBox.Show("Worker completed");
+            //MessageBox.Show("Worker completed");
             ModelVulnerabilityDB modelVulnerabilityDB = new ModelVulnerabilityDB();
             var emptyVuln = modelVulnerabilityDB.GetAllEmptyVulnerabilities();
             var userVulnerabilityDBs = new CRUDUserVulnerabilitesDB().GetObjects().ToList();
@@ -124,7 +127,8 @@ namespace DependencyCheck
 
             dependencyVulnerabilityDBs = cdv.GetList();
 
-            dependencyVulnerabilityDBs = dependencyVulnerabilityDBs.Where(x => x.fileScaning == pathToProject + projectName)
+            var path = pathToProject + "\\" + projectName;
+            dependencyVulnerabilityDBs = dependencyVulnerabilityDBs.Where(x => x.fileScaning == path)
                 .OrderBy(x => x.dateTime).ToList();
 
             foreach (DependencyVulnerabilityDB dependencyVulnerabilityDB in dependencyVulnerabilityDBs.ToList())
@@ -152,6 +156,9 @@ namespace DependencyCheck
                 riskScoreEntities.Find(x => x.dateTime == dateTime).score += sum;
             }
 
+            Table table = new Table(path);
+            table.Show();
+            this.Hide();
             foreach (RiskScoreEntities riskScore in riskScoreEntities)
                 Console.WriteLine(riskScore.score);
             Console.ReadLine();
@@ -162,7 +169,6 @@ namespace DependencyCheck
             IdentifyVulnerabilities identifyVulnerabilities = new IdentifyVulnerabilities();
             dependencyVulnerabilityDBs = identifyVulnerabilities.OWASPDependencyCheck(projectName, pathToProject, outFromat);
 
-            cdv = new CRUDDepenVulnDB();
             cdv.SaveList(dependencyVulnerabilityDBs);
             //Console.Read();
 
@@ -194,8 +200,8 @@ namespace DependencyCheck
 
         private void Start_Click(object sender, RoutedEventArgs e)
         {
-
-
+            Start.IsEnabled = false;
+            Cansel.IsEnabled = true;
             telegramBotControler.SendStartMessagesToAll();
             bgWorker.RunWorkerAsync();
         }

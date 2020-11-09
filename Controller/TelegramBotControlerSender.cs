@@ -58,6 +58,7 @@ namespace RiskScore.Controller
 
                     var uservul = modelVulnerabilityDB.UserCreateMark(mark, categotry, vulnId, userId);
                     FindNewWork(userId);
+                    if(uservul!=null)
                     rezult.Value = "+1," + " User: " + userId + ". vuler: " + uservul.vulnerability.name +
                         ". Added: " + categotry;
                 }

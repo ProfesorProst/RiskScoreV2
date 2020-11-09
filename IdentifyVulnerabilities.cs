@@ -24,7 +24,7 @@ namespace DependencyCheck
             string rezult = File.ReadAllText(baseDirectory + "dependency-check-report.json");
 
             File.Delete(baseDirectory + "dependency-check-report.json");
-            return ParseJSONFromOwaspDC(rezult, pathToProject+projectName);
+            return ParseJSONFromOwaspDC(rezult, pathToProject+"\\"+projectName);
         }
 
         private List<DependencyVulnerabilityDB> ParseJSONFromOwaspDC(string rezult, string filescaning)

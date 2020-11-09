@@ -16,12 +16,7 @@ namespace RiskScore.Models
 
         public int[] Calculation(int[][] ants1)
         {
-            numCities = ants1.Length;
-            int[][] ants = new int[numCities][];
-
-            ants[0] = new int[] { 6, 5, 7 };
-            ants[1] = new int[] { 6, 7, 5 };
-            ants[2] = new int[] { 5, 7, 7 };
+            numCities = ants1.First().Length;
             double[][] pheromones = InitPheromones(numCities, numVar);
 
             for (int i = 0; i < ants1.Length; i++)

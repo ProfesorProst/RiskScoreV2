@@ -19,7 +19,10 @@ namespace RiskScore.Models
 
         public List<DependencyVulnerabilityDB> GetList()
         {
-            return db.dependencyVulnerabilityDBs.ToList();
+            var full = db.dependencyVulnerabilityDBs.ToList();
+            foreach (var item in full)
+                item.dependency = db.dependencyDBs.Where(x => x.id == item.dependency_id).First();
+            return full;
         }
 
         public void SaveList(List<DependencyVulnerabilityDB> dependencyVulnerabilityDBs)

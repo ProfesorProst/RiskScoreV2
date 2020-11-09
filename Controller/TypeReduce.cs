@@ -50,6 +50,7 @@ namespace T2FSv1.Controller
         {
             double ylkQuote = step1(ylk, ruleMapx);
             int roul = 0;
+            int count = 0;
 
             bool test = true;
             while (test)
@@ -58,7 +59,7 @@ namespace T2FSv1.Controller
 
                 double ylkDQuote = step3l(ylk, ruleMapx, R, roul);
 
-                if (Math.Abs(ylkQuote - ylkDQuote) < 0.000000001)
+                if (Math.Abs(ylkQuote - ylkDQuote) < 0.001 || count==1000)
                 {
                     test = false;
                     break;
@@ -66,6 +67,7 @@ namespace T2FSv1.Controller
                 else
                 {
                     ylkQuote = ylkDQuote;
+                    count++;
                 }
             }
 
